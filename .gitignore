@@ -8,6 +8,7 @@ __pycache__/
 
 # Distribution / packaging
 us-wildfire.sqlite
+.sqlite
 .Python
 build/
 develop-eggs/
