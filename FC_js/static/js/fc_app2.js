@@ -252,3 +252,155 @@ d3.select("#circleBasicTooltip")
  }).catch(function(error) {
   console.log(error);
 });
+
+
+// scatter map
+
+d3.csv('data/bigfire.csv', function(err, rows){
+  function filter_and_unpack(rows, key, year) {
+    return rows.filter(row => row['FIRE_YEAR'] == year).map(row => row[key])
+    }
+
+  var frames = []
+  var slider_steps = []
+
+  var n = 4;
+  var num = 2011;
+  for (var i = 0; i <= n; i++) {
+    var size = filter_and_unpack(rows, 'LOG_FIRE_SIZE', num)
+    var cause = filter_and_unpack(rows, 'STAT_CAUSE_DESCR', num)
+    var lon = filter_and_unpack(rows, 'LONGITUDE', num)
+    var lat = filter_and_unpack(rows, 'LATITUDE', num)
+    frames[i] = {data: [{size: size, lon: lon, lat: lat, text: cause}], name: num}
+    slider_steps.push ({
+        label: num.toString(),
+        method: "animate",
+        args: [[num], {
+            mode: "immediate",
+            transition: {duration: 300},
+            frame: {duration: 300}
+          }
+        ]
+      })
+    num = num + 1
+  }
+
+
+  scl = [[2, 'rgb(150,0,90)'],[3, 'rgb(0, 0, 200)'],
+  [4,'rgb(0, 25, 255)'],[5,'rgb(0, 152, 255)'],
+  [6,'rgb(44, 255, 150)'],[8,'rgb(151, 255, 0)'],
+  [10,'rgb(255, 234, 0)'],[12,'rgb(255, 111, 0)'],[14,'rgb(255, 0, 0)']];
+
+    var data = [{
+        type: 'scattergeo',
+        mode: 'markers',
+        text: frames[0].data[0].text,
+        lon: frames[0].data[0].lon,
+        lat: frames[0].data[0].lat,
+        marker: {
+          color: frames[0].data[0].size,
+          colorscale: scl,
+          cmin: 2,
+          cmax: 14,
+          reversescale: false,
+          opacity: 0.2,
+          size: 2,
+          colorbar:{
+            thickness: 10,
+            titleside: 'right',
+            outlinecolor: 'rgba(68,68,68,0)',
+            ticks: 'outside',
+            ticklen: 3,
+            shoticksuffix: 'last',
+            // ticksuffix: ' log2 acres',
+            dtick: 2
+          }
+        },
+        name: 'USA Fire'
+    }];
+
+    var layout = {
+      geo:{
+        scope: 'usa',
+        showland: true,
+        landcolor: 'rgb(212,212,212)',
+        subunitcolor: 'rgb(255,255,255)',
+        countrycolor: 'rgb(255,255,255)',
+        showlakes: true,
+        lakecolor: 'rgb(255,255,255)',
+        showsubunits: true,
+        showcountries: true,
+        resolution: 50,
+        projection: {type: 'albers usa'}
+      },
+      title: 'title',
+      width: 600,
+      height: 600,
+    
+      updatemenus: [{
+        x: 0.1,
+        y: 0,
+        yanchor: "top",
+        xanchor: "right",
+        showactive: false,
+        direction: "left",
+        type: "buttons",
+        pad: {"t": 87, "r": 10},
+        buttons: [{
+          method: "animate",
+          args: [null, {
+            fromcurrent: true,
+            transition: {
+              duration: 200,
+            },
+            frame: {
+              duration: 500
+            }
+          }],
+          label: "Play"
+        }, {
+          method: "animate",
+          args: [
+            [null],
+            {
+              mode: "immediate",
+              transition: {
+                duration: 0
+              },
+              frame: {
+                duration: 0
+              }
+            }
+          ],
+          label: "Pause"
+        }]
+      }],
+      sliders: [{
+        active: 0,
+        steps: slider_steps,
+        x: 0.1,
+        len: 0.9,
+        xanchor: "left",
+        y: 0,
+        yanchor: "top",
+        pad: {t: 50, b: 10},
+        currentvalue: {
+          visible: true,
+          prefix: "Year:",
+          xanchor: "right",
+          font: {
+            size: 20,
+            color: "#666"
+          }
+        },
+        transition: {
+          duration: 300,
+          easing: "cubic-in-out"
+        }
+      }]
+    };
+
+    Plotly.newPlot('chart3', data, layout).then(function() {
+      Plotly.addFrames('chart3', frames);
+  });
+})
