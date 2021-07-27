@@ -41,41 +41,44 @@ d3.csv("data/us-wildfires.csv").then(function(data) {
     var currentStateData = data.filter(d => d.STATE === currentState);
     console.log(currentStateData);
     console.log("finished filter");
+    currentStateData.forEach(d => {
+      d.FIRE_SIZE = +d.FIRE_SIZE;
+    });
 
     // Create function to count by class
-    function classCounter(stateData) {
+    function dataCounter(stateData, column) {
       // Dictionary to hold output
       var finalCounts = {};
 
-      let fireClasses = [],
-        fireClassCount = [],
-        classes = stateData.map(d => d.FIRE_SIZE_CLASS).sort(),
+      let fireValues = [],
+        fireValueCount = [],
+        classes = stateData.map(d => d[column]).sort(),
         previousElement;
       console.log(classes)
 
       classes.forEach(currentElement => {
         if (currentElement !== previousElement) {
-          fireClasses.push(currentElement);
-          fireClassCount.push(1);
+          fireValues.push(currentElement);
+          fireValueCount.push(1);
           previousElement = currentElement;
         }
         else {
-          fireClassCount[fireClassCount.length - 1]++;
+          fireValueCount[fireValueCount.length - 1]++;
           previousElement = currentElement;
         }
       });
 
-      finalCounts.classes = fireClasses;
-      finalCounts.counts = fireClassCount;
+      finalCounts.values = fireValues;
+      finalCounts.counts = fireValueCount;
       return finalCounts;
     }
 
-    var stateCounts = classCounter(currentStateData);
+    var stateCounts = dataCounter(currentStateData, 'FIRE_SIZE_CLASS');
     console.log(stateCounts);
 
     // Create components to graph with plotly
     var traceBar = {
-      x: stateCounts.classes,
+      x: stateCounts.values,
       y: stateCounts.counts,
       type: "bar",
       text: stateCounts.counts.map(String),
@@ -98,15 +101,62 @@ d3.csv("data/us-wildfires.csv").then(function(data) {
 
     Plotly.newPlot("bar", barData, barLayout);
 
+    // Bar Plot Number 2
+
+    var countyCounts = dataCounter(currentStateData, 'COUNTY');
+    console.log(countyCounts);
+
+    // Create components to graph with plotly
+    var traceBar = {
+      x: countyCounts.values,
+      y: countyCounts.counts,
+      type: "bar",
+      text: countyCounts.counts.map(String),
+      textposition: 'auto',
+      marker: {
+        color: 'rgb(255,153,51)',
+        opacity: 0.6,
+        line: {
+          color: 'rgb(8,48,107)',
+          width: 1.5
+        }
+      }
+    };
+
+    var barData2 = [traceBar];
+
+    var barLayout2 = {
+      title: `Top 10 Fire Countes by County in ${currentState}`
+    };
+
+    Plotly.newPlot("chart2", barData2, barLayout2);
+    // Bubble Chart
+    // ***********************************
+    // Create trace and layout
+    var bubbleScale = 15;
+    var traceBubble = {
+      x : currentStateData.map(d => d.FIRE_YEAR),
+      y : currentStateData.map(d => d.FIRE_SIZE),
+      mode: "markers",
+      text: currentStateData.map(d => d.FIRE_NAME),
+      marker: {
+        size: currentStateData.map(d => d.FIRE_SIZE),
+        color: currentStateData.map(d => d.FIRE_SIZE),
+        sizeref: 2.0 * Math.max(...currentStateData.map(d => d.FIRE_SIZE)) / (bubbleScale**2),
+      }
+    };
+    var bubbleLayout = {
+      title: `Fire Sizes by Year in ${currentState}`,
+      xaxis: {title: "Fire Year"}
+    };
+
+    var bubbleData = [traceBubble];
+
+    // Create bubble chart
+    Plotly.newPlot("bubble", bubbleData, bubbleLayout);
   }
 
 
-
-
-
-
-  // Bubble Chart
-  // ***********************************
 });
 
 console.log("hello");
