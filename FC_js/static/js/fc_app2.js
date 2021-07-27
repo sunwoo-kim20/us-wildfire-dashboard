@@ -267,11 +267,13 @@ d3.csv('data/bigfire.csv', function(err, rows){
   var n = 4;
   var num = 2011;
   for (var i = 0; i <= n; i++) {
-    var size = filter_and_unpack(rows, 'LOG_FIRE_SIZE', num)
+    var logsize = filter_and_unpack(rows, 'LOG_FIRE_SIZE', num)
     var cause = filter_and_unpack(rows, 'STAT_CAUSE_DESCR', num)
     var lon = filter_and_unpack(rows, 'LONGITUDE', num)
     var lat = filter_and_unpack(rows, 'LATITUDE', num)
-    frames[i] = {data: [{size: size, lon: lon, lat: lat, text: cause}], name: num}
+    var size = filter_and_unpack(rows, 'FIRE_SIZE', num)
+    frames[i] = {data: [{logsize: logsize, size: size, lon: lon, lat: lat, text: cause}], name: num}
+    console.log(frames[0].data[0].size)
     slider_steps.push ({
         label: num.toString(),
         method: "animate",
@@ -285,26 +287,24 @@ d3.csv('data/bigfire.csv', function(err, rows){
     num = num + 1
   }
 
-
-  scl = [[2, 'rgb(150,0,90)'],[3, 'rgb(0, 0, 200)'],
-  [4,'rgb(0, 25, 255)'],[5,'rgb(0, 152, 255)'],
-  [6,'rgb(44, 255, 150)'],[8,'rgb(151, 255, 0)'],
-  [10,'rgb(255, 234, 0)'],[12,'rgb(255, 111, 0)'],[14,'rgb(255, 0, 0)']];
-
     var data = [{
         type: 'scattergeo',
         mode: 'markers',
-        text: frames[0].data[0].text,
+        text: frames[0].data[0].size,
+        meta: frames[0].data[0].text,
         lon: frames[0].data[0].lon,
         lat: frames[0].data[0].lat,
+        hovertemplate: `<b>Fire Size: %{text} acres </b><br>` +
+        `<b>%{meta}</b>`+
+        `<extra></extra>`,
         marker: {
-          color: frames[0].data[0].size,
-          colorscale: scl,
+          color: frames[0].data[0].logsize,
+          colorscale: 'YlOrRd',
           cmin: 2,
           cmax: 14,
-          reversescale: false,
-          opacity: 0.2,
-          size: 2,
+          reversescale: true,
+          opacity: 1,
+          size: 4,
           colorbar:{
             thickness: 10,
             titleside: 'right',
@@ -312,13 +312,13 @@ d3.csv('data/bigfire.csv', function(err, rows){
             ticks: 'outside',
             ticklen: 3,
             shoticksuffix: 'last',
-            // ticksuffix: ' log2 acres',
+            title: ' Fire Size (log2 acres) ',
             dtick: 2
           }
         },
-        name: 'USA Fire'
+        name: 'Fire'
     }];
-
+    
     var layout = {
       geo:{
         scope: 'usa',
@@ -333,10 +333,10 @@ d3.csv('data/bigfire.csv', function(err, rows){
         resolution: 50,
         projection: {type: 'albers usa'}
       },
-      title: 'title',
-      width: 600,
-      height: 600,
-    
+      title: 'US Fire Size from 2011 to 2015',
+      width: 1000,
+      height: 750,
+      zoom: 20,
       updatemenus: [{
         x: 0.1,
         y: 0,
@@ -400,7 +400,7 @@ d3.csv('data/bigfire.csv', function(err, rows){
       }]
     };
 
-    Plotly.newPlot('chart3', data, layout).then(function() {
-      Plotly.addFrames('chart3', frames);
+    Plotly.newPlot('chart4', data, layout).then(function() {
+      Plotly.addFrames('chart4', frames);
   });
 })
