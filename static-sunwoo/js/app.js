@@ -27,6 +27,9 @@ d3.csv("data/us-wildfires.csv").then(function(data) {
   dropdown.on("change", genCharts);
   form.on("submit", genCharts);
 
+  var parseDate = d3.timeParse("%Y-%m-%d");
+
+
   function genCharts() {
     d3.event.preventDefault();
 
@@ -43,6 +46,8 @@ d3.csv("data/us-wildfires.csv").then(function(data) {
     console.log("finished filter");
     currentStateData.forEach(d => {
       d.FIRE_SIZE = +d.FIRE_SIZE;
+      d.COUNTY = d.COUNTY.toLowerCase();
+      d.DISCOVERY_DATE = parseDate(d.DISCOVERY_DATE);
     });
 
     // Create function to count by class
@@ -57,7 +62,10 @@ d3.csv("data/us-wildfires.csv").then(function(data) {
       console.log(classes)
 
       classes.forEach(currentElement => {
-        if (currentElement !== previousElement) {
+        if (currentElement === "na") {
+
+        }
+        else if (currentElement !== previousElement) {
           fireValues.push(currentElement);
           fireValueCount.push(1);
           previousElement = currentElement;
@@ -106,12 +114,28 @@ d3.csv("data/us-wildfires.csv").then(function(data) {
     var countyCounts = dataCounter(currentStateData, 'COUNTY');
     console.log(countyCounts);
 
+    // Transform into a dictionary
+    var topCounties = [];
+    for(var i = 0; i < countyCounts.counts.length; i++) {
+      var tempDict = {};
+      tempDict.county = countyCounts.values[i];
+      tempDict.fireCount = countyCounts.counts[i];
+      topCounties.push(tempDict);
+    }
+
+    // Get top 10 counties by fire count
+    var topTenCounties  = topCounties.sort(function compareFunction(first, second) {
+      return second.fireCount - first.fireCount;
+    });
+
+    topTenCounties = topTenCounties.slice(0,10);
+
     // Create components to graph with plotly
     var traceBar = {
-      x: countyCounts.values,
-      y: countyCounts.counts,
+      x: topTenCounties.map(d => d.county),
+      y: topTenCounties.map(d => d.fireCount),
       type: "bar",
-      text: countyCounts.counts.map(String),
+      text: topTenCounties.map(d => d.fireCount).map(String),
       textposition: 'auto',
       marker: {
         color: 'rgb(255,153,51)',
@@ -126,7 +150,7 @@ d3.csv("data/us-wildfires.csv").then(function(data) {
     var barData2 = [traceBar];
 
     var barLayout2 = {
-      title: `Top 10 Fire Countes by County in ${currentState}`
+      title: `Top 10 Counties by Fire Count in ${currentState}`
     };
 
     Plotly.newPlot("chart2", barData2, barLayout2);
