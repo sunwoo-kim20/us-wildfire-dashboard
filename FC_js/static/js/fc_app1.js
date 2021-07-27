@@ -19,7 +19,8 @@ var height = svgHeight - margin.top - margin.bottom;
 
 // Select body, append SVG area to it, and set the dimensions
 // ==============================
-var svg = d3.select("#chart2")
+var svg = d3.select("#chart2").classed('chart2', true)
+
   .append("svg")
   .attr("height", svgHeight)
   .attr("width", svgWidth)
@@ -107,8 +108,24 @@ chartGroup.selectAll(".bar")
     .attr("y", d => yLinearScale(d.value))
     .attr("width", xBandScale.bandwidth())
     .attr("height", d => height - yLinearScale(d.value))
-    .attr("fill" , "orange")
- 
+    .attr("fill" , "lightgrey")
+ .on('mouseover', function (d, i) {
+          tooltip
+            .html(
+              `<div>Year: ${d.key}</div><hr> ${d.value}</div>`
+            )
+            .style('visibility', 'visible');
+          d3.select(this).transition().attr('fill', hoverColor);
+      })
+      .on('mousemove', function () {
+          tooltip
+            .style('top', d3.event.pageY - 10 + 'px')
+            .style('left', d3.event.pageX + 10 + 'px');
+      })
+      .on('mouseout', function () {
+          tooltip.html(``).style('visibility', 'hidden');
+          d3.select(this).transition().attr('fill', staticColor);
+      });
  
 // Label
 chartGroup.append("text")
@@ -122,14 +139,29 @@ chartGroup.append("text")
       .text("Number of Fires (Thousands)");
 
 chartGroup.append("text")
-      .attr("transform", `translate(${width / 2}, ${height + margin.top + 30})`)
-      .attr("class", "axisText")
-      .style("font-weight" , "bold")
-      .attr("text-anchor", "middle")
-      .text("Year"); 
+      .attr("text-anchor", "end")
+      .attr("x", width)
+      .attr("y", height+40 )
+      .text("Year");
 
+tooltip = d3
+    .select('body')
+    .append('div')
+    .attr('class', 'd3-tooltip')
+    .style('position', 'absolute')
+    .style('z-index', '10')
+    .style('visibility', 'hidden')
+    .style('padding', '10px')
+    .style('background', 'rgba(0,0,0,0.6)')
+    .style('border-radius', '4px')
+    .style('color', '#fff')
+    .text('a simple tooltip');
 
+staticColor = '#FF7F50';
+hoverColor = '#DE3163';
 
  }).catch(function(error) {
   console.log(error);
 });
+
+
