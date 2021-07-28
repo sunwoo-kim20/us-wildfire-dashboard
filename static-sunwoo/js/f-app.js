@@ -1,13 +1,13 @@
 // scatter map
 
-d3.csv('data/bigfire.csv', function(err, rows){
+d3.csv('../data/us-wildfires.csv', function(err, rows){
     function filter_and_unpack(rows, key, year) {
       return rows.filter(row => row['FIRE_YEAR'] == year).map(row => row[key])
       }
-  
+
     var frames = []
     var slider_steps = []
-  
+
     var n = 4;
     var num = 2011;
     for (var i = 0; i <= n; i++) {
@@ -17,7 +17,7 @@ d3.csv('data/bigfire.csv', function(err, rows){
       var lat = filter_and_unpack(rows, 'LATITUDE', num)
       var size = filter_and_unpack(rows, 'FIRE_SIZE', num)
       frames[i] = {data: [{logsize: logsize, size: size, lon: lon, lat: lat, text: cause}], name: num}
-      console.log(frames[0].data[0].size)
+      // console.log(frames[0].data[0].size)
       slider_steps.push ({
           label: num.toString(),
           method: "animate",
@@ -30,7 +30,7 @@ d3.csv('data/bigfire.csv', function(err, rows){
         })
       num = num + 1
     }
-  
+
       var data = [{
           type: 'scattergeo',
           mode: 'markers',
@@ -62,7 +62,7 @@ d3.csv('data/bigfire.csv', function(err, rows){
           },
           name: 'Fire'
       }];
-      
+
       var layout = {
         geo:{
           scope: 'usa',
@@ -143,15 +143,8 @@ d3.csv('data/bigfire.csv', function(err, rows){
           }
         }]
       };
-  
+
       Plotly.newPlot('chart4', data, layout).then(function() {
-        Plotly.addFrames('chart4', frames);
+      Plotly.addFrames('chart4', frames);
     });
   })
-
-
-
-// add to html
-{/* <script src='https://cdn.plot.ly/plotly-2.2.0.min.js'></script>
-<script src='https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js'></script>
-<script src="https://d3js.org/d3.v4.min.js"></script> */}
