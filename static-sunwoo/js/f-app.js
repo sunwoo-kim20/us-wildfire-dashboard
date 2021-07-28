@@ -1,6 +1,6 @@
 // scatter map
 
-d3.csv('../data/us-wildfires.csv', function(err, rows){
+d3.csv('../data/bigfire.csv', function(err, rows){
     function filter_and_unpack(rows, key, year) {
       return rows.filter(row => row['FIRE_YEAR'] == year).map(row => row[key])
       }

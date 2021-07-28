@@ -301,7 +301,7 @@ d3.csv("data/us-wildfires.csv").then(function(data) {
       title: `Top 10 Counties by Fire Count in ${currentState}`
     };
 
-    Plotly.newPlot("chart2", barData2, barLayout2);
+    Plotly.newPlot("bar2", barData2, barLayout2);
     // Bubble Chart
     // ***********************************
     // Create trace and layout
