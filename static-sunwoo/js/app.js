@@ -51,32 +51,32 @@ function createMap(startingCoords, mapZoomLevel, wildfireYears) {
   // Create layer control, pass in the baseMaps and overlayMaps. Add the layer control to the map
   L.control.layers(baseMaps, overlayMaps).addTo(myMap);
 
-  // Legend set up
-  var legend = L.control({ position: "bottomright" });
-  legend.onAdd = function() {
-    var div = L.DomUtil.create("div", "info legend");
-    var limits = ["-10-10", "10-30", "30-50", "50-70", "70-90", "90+"];
-    var colors = ["#ccffcc", "#ccff99", "#ffff99", "#ffdb4d", "#e68a00","#cc0000"];
-    var labels = [];
-
-    // Add levels
-    var legendInfo = "<h1>Fire Size</h1>" +
-      "<div class=\"labels\">"
-
-    div.innerHTML = legendInfo;
-
-    limits.forEach(function(limit, index) {
-      labels.push("<li style=\"background-color: " + colors[index] + "\">" + limit + "</li>");
-    });
-    for (var i = 0; i < limits.length; i++) {
-      div.innerHTML += "<ul>" + labels[i] + "</ul>";
-    }
-
-    return div;
-  };
-
-  // Adding legend to the map
-  legend.addTo(myMap);
+  // // Legend set up
+  // var legend = L.control({ position: "bottomright" });
+  // legend.onAdd = function() {
+  //   var div = L.DomUtil.create("div", "info legend");
+  //   var limits = ["-10-10", "10-30", "30-50", "50-70", "70-90", "90+"];
+  //   var colors = ["#ccffcc", "#ccff99", "#ffff99", "#ffdb4d", "#e68a00","#cc0000"];
+  //   var labels = [];
+  //
+  //   // Add levels
+  //   var legendInfo = "<h1>Fire Size</h1>" +
+  //     "<div class=\"labels\">"
+  //
+  //   div.innerHTML = legendInfo;
+  //
+  //   limits.forEach(function(limit, index) {
+  //     labels.push("<li style=\"background-color: " + colors[index] + "\">" + limit + "</li>");
+  //   });
+  //   for (var i = 0; i < limits.length; i++) {
+  //     div.innerHTML += "<ul>" + labels[i] + "</ul>";
+  //   }
+  //
+  //   return div;
+  // };
+  //
+  // // Adding legend to the map
+  // legend.addTo(myMap);
 
 }
 
@@ -129,7 +129,7 @@ function createCircles(fireData, year) {
         Discovery Date: ${fire.DISCOVERY_DATE} <br>
         Fire Size: ${fire.FIRE_SIZE} Acres`;
       fireCircles.push(
-        L.circle([quake.geometry.coordinates[1], quake.geometry.coordinates[0]], {
+        L.circle([fire.LATITUDE, fire.LONGITUDE], {
           color: chooseColor(fire.FIRE_SIZE_CLASS),
           fillColor: chooseColor(fire.FIRE_SIZE_CLASS),
           fillOpacity: 0.5,
@@ -328,8 +328,20 @@ d3.csv("data/us-wildfires.csv").then(function(data) {
     Plotly.newPlot("bubble", bubbleData, bubbleLayout);
 
     // Select coordinates for starting map view
+    d3.select("#map").html("");
     var startingCoords = [currentStateData[0].LATITUDE, currentStateData[0].LONGITUDE];
     var mapZoomLevel = 5;
+    console.log(startingCoords);
+
+    var fires2011 = createCircles(currentStateData, 2011);
+    var fires2012 = createCircles(currentStateData, 2012);
+    var fires2013 = createCircles(currentStateData, 2013);
+    var fires2014 = createCircles(currentStateData, 2014);
+    var fires2015 = createCircles(currentStateData, 2015);
+
+    var annualFireLayers = [fires2011, fires2012, fires2013, fires2014, fires2015];
+    createMap(startingCoords, mapZoomLevel, annualFireLayers);
+    console.log("created map");
   }
 
 
