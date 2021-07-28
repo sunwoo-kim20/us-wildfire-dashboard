@@ -1,149 +1,3 @@
-// // Create the createMap function
-// function createMap(startingCoords, mapZoomLevel, wildfireYears) {
-//
-//   // Create a baseMaps object to hold the satellite layer
-//   var satellitemap = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
-//     attribution: "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>",
-//     tileSize: 512,
-//     maxZoom: 18,
-//     zoomOffset: -1,
-//     id: "mapbox/satellite-v9",
-//     accessToken: API_KEY
-//   });
-//
-//   // Create a baseMaps object to hold the darkmap layer
-//   var darkmap = L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
-//     attribution: "Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"https://www.mapbox.com/\">Mapbox</a>",
-//     maxZoom: 18,
-//     id: "dark-v10",
-//     accessToken: API_KEY
-//   });
-//
-//   // Create a baseMaps object to hold the lightmap layer
-//   var lightmap = L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
-//     attribution: "Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"https://www.mapbox.com/\">Mapbox</a>",
-//     maxZoom: 18,
-//     id: "light-v10",
-//     accessToken: API_KEY
-//   });
-//
-//   var baseMaps = {
-//     Satellite: satellitemap,
-//     Dark: darkmap,
-//     Light: lightmap
-//   };
-//   // Create an overlayMaps object to hold the earthquakes layer
-//   overlayMaps = {
-//     Year2011: wildfireYears[0],
-//     Year2012: wildfireYears[1],
-//     Year2013: wildfireYears[2],
-//     Year2014: wildfireYears[3],
-//     Year2015: wildfireYears[4]
-//   };
-//
-//   // Create the map object with options
-//   var myMap = L.map("map", {
-//     center: startingCoords,
-//     zoom: mapZoomLevel,
-//     layers: [satellitemap, wildfireYears[0]]
-//   });
-//
-//   // Create layer control, pass in the baseMaps and overlayMaps. Add the layer control to the map
-//   L.control.layers(baseMaps, overlayMaps).addTo(myMap);
-//
-//   // // Legend set up
-//   // var legend = L.control({ position: "bottomright" });
-//   // legend.onAdd = function() {
-//   //   var div = L.DomUtil.create("div", "info legend");
-//   //   var limits = ["-10-10", "10-30", "30-50", "50-70", "70-90", "90+"];
-//   //   var colors = ["#ccffcc", "#ccff99", "#ffff99", "#ffdb4d", "#e68a00","#cc0000"];
-//   //   var labels = [];
-//   //
-//   //   // Add levels
-//   //   var legendInfo = "<h1>Fire Size</h1>" +
-//   //     "<div class=\"labels\">"
-//   //
-//   //   div.innerHTML = legendInfo;
-//   //
-//   //   limits.forEach(function(limit, index) {
-//   //     labels.push("<li style=\"background-color: " + colors[index] + "\">" + limit + "</li>");
-//   //   });
-//   //   for (var i = 0; i < limits.length; i++) {
-//   //     div.innerHTML += "<ul>" + labels[i] + "</ul>";
-//   //   }
-//   //
-//   //   return div;
-//   // };
-//   //
-//   // // Adding legend to the map
-//   // legend.addTo(myMap);
-//
-// }
-//
-// // Create function to select color for circles
-// function chooseColor(fireClass) {
-//   // Initialize color variable
-//   var color = "";
-//   // Assign color by fire class
-//   switch (fireClass) {
-//     case "A":
-//       color = "#ccff99";
-//       break;
-//     case "B":
-//       color = "#fff75d";
-//       break;
-//     case "C":
-//       color = "#ffc11f";
-//       break;
-//     case "D":
-//       color = "#fe650d";
-//       break;
-//     case "E":
-//       color = "#f33c04";
-//       break;
-//     case "F":
-//       color = "#da1f05";
-//       break;
-//     case "G":
-//       color = "#a10100";
-//       break;
-//     default:
-//       color = "#fffff";
-//   }
-//   return color;
-// }
-//
-//
-// // Create the createCircles function
-// function createCircles(fireData, year) {
-//
-//   // Initialize an array to hold the fire data
-//   var fireCircles = [];
-//
-//   // Loop through the fire data
-//     // For each fire, create a circle and bind a popup with additional info
-//   fireData.forEach(function(fire) {
-//     if (fire.FIRE_YEAR === year) {
-//       var fireInfo = `Fire Name: ${fire.FIRE_NAME} <hr>
-//         County: ${fire.COUNTY} <br>
-//         Discovery Date: ${fire.DISCOVERY_DATE} <br>
-//         Fire Size: ${fire.FIRE_SIZE} Acres`;
-//       fireCircles.push(
-//         L.circle([fire.LATITUDE, fire.LONGITUDE], {
-//           color: chooseColor(fire.FIRE_SIZE_CLASS),
-//           fillColor: chooseColor(fire.FIRE_SIZE_CLASS),
-//           fillOpacity: 0.5,
-//           radius: fire.FIRE_SIZE * 10000
-//         }).bindPopup(fireInfo)
-//       );
-//     }
-//   });
-//
-//   // Create a layer group with the earthquake circles and output as function return
-//   var fireInstances = L.layerGroup(fireCircles);
-//   return fireInstances;
-// }
-
 d3.csv("data/us-wildfires.csv").then(function(data) {
 
   console.log(data);
@@ -197,6 +51,33 @@ d3.csv("data/us-wildfires.csv").then(function(data) {
       d.COUNTY = d.COUNTY.toLowerCase();
       d.DISCOVERY_DATE = parseDate(d.DISCOVERY_DATE);
     });
+
+
+    // Sort Data by largest fire for table
+    var sortedFire = currentStateData.sort(function compareFunction(first, second) {
+      return second.FIRE_SIZE - first.FIRE_SIZE;
+    });
+    var largestFire = sortedFire[0];
+
+    // Add info to table
+    var metadataDisplay = d3.select("#sample-metadata");
+    metadataDisplay.html("");
+    metadataDisplay.append("p")
+      .attr("style", "font-weight : bold").text(`Total Fires : ${currentStateData.length}`);
+    metadataDisplay.append("p")
+      .attr("style", "font-weight : bold").text(`Largest Fire in ${currentState}`);
+    metadataDisplay.append("hr");
+    metadataDisplay.append("p")
+      .attr("style", "font-weight : bold").text(`Fire Name : ${largestFire.FIRE_NAME}`);
+    metadataDisplay.append("p")
+      .attr("style", "font-weight : bold").text(`County : ${largestFire.COUNTY}`);
+    metadataDisplay.append("p")
+      .attr("style", "font-weight : bold").text(`Fire Size : ${largestFire.FIRE_SIZE} acres`);
+    metadataDisplay.append("p")
+      .attr("style", "font-weight : bold").text(`Fire Size Class : ${largestFire.FIRE_SIZE_CLASS}`);
+    metadataDisplay.append("p")
+      .attr("style", "font-weight : bold").text(`Year : ${largestFire.FIRE_YEAR}`);
+
 
     // Create function to count by class
     function dataCounter(stateData, column) {
@@ -327,24 +208,7 @@ d3.csv("data/us-wildfires.csv").then(function(data) {
     // Create bubble chart
     Plotly.newPlot("bubble", bubbleData, bubbleLayout);
 
-    // Select coordinates for starting map view
-    // d3.select("#map").html("");
-    // var startingCoords = [currentStateData[0].LATITUDE, currentStateData[0].LONGITUDE];
-    // var mapZoomLevel = 5;
-    // console.log(startingCoords);
-    //
-    // var fires2011 = createCircles(currentStateData, 2011);
-    // var fires2012 = createCircles(currentStateData, 2012);
-    // var fires2013 = createCircles(currentStateData, 2013);
-    // var fires2014 = createCircles(currentStateData, 2014);
-    // var fires2015 = createCircles(currentStateData, 2015);
-    //
-    // var annualFireLayers = [fires2011, fires2012, fires2013, fires2014, fires2015];
-    // createMap(startingCoords, mapZoomLevel, annualFireLayers);
-    // console.log("created map");
   }
 
 
 });
-
-console.log("hello");
