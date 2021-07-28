@@ -2,6 +2,7 @@
 
 // Define SVG area dimensions
 // ==============================
+console.log("running chart2");
 var svgWidth = 960;
 var svgHeight = 550;
 
@@ -36,7 +37,7 @@ var chartGroup = svg.append("g")
 //Load data from us-widlfires.csv
 // ==============================
 d3.csv("data/us-wildfires.csv").then(function(fireData) {
-  
+
   //console.log("fireData", fireData);
   //console.table(fireData[0]);
 
@@ -50,9 +51,9 @@ d3.csv("data/us-wildfires.csv").then(function(fireData) {
  console.table(sum);
 
 var num_fires_year = d3.nest()
-  
+
   .key(function(d) { return d.FIRE_YEAR; }).sortKeys(d3.ascending)
-   
+
   .rollup(function(v) { return v.length; })
   .entries(fireData)
 
@@ -68,9 +69,9 @@ var fires_scale = d3.nest()
 
 //console.log(fires_scale);
 console.table(fires_scale)
-  
 
-// Char 2 - Bar Chart 
+
+// Char 2 - Bar Chart
 
 var xBandScale = d3.scaleBand()
     .domain(num_fires_year.map(d => d.key))
@@ -126,7 +127,7 @@ chartGroup.selectAll(".bar")
           tooltip.html(``).style('visibility', 'hidden');
           d3.select(this).transition().attr('fill', staticColor);
       });
- 
+
 // Label
 chartGroup.append("text")
       .attr("transform", "rotate(-90)")
@@ -163,5 +164,3 @@ hoverColor = '#DE3163';
  }).catch(function(error) {
   console.log(error);
 });
-
-
