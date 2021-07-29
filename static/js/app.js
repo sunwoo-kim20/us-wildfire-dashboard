@@ -188,7 +188,7 @@ d3.csv("data/us-wildfires.csv").then(function(data) {
     // Create trace and layout
     var bubbleScale = 15;
     var traceBubble = {
-      x : currentStateData.map(d => d.FIRE_YEAR),
+      x : currentStateData.map(d => d.DISCOVERY_DATE),
       y : currentStateData.map(d => d.FIRE_SIZE),
       mode: "markers",
       text: currentStateData.map(d => d.FIRE_NAME),
