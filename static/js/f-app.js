@@ -16,7 +16,7 @@ d3.csv('../data/bigfire.csv', function(err, rows){
       var lon = filter_and_unpack(rows, 'LONGITUDE', num)
       var lat = filter_and_unpack(rows, 'LATITUDE', num)
       var size = filter_and_unpack(rows, 'FIRE_SIZE', num)
-      frames[i] = {data: [{logsize: logsize, size: size, lon: lon, lat: lat, text: cause}], name: num}
+      frames[i] = {data: [{logsize: logsize, size: size, lon: lon, lat: lat, texts: cause}], name: num}
       // console.log(frames[0].data[0].size)
       slider_steps.push ({
           label: num.toString(),
@@ -35,7 +35,7 @@ d3.csv('../data/bigfire.csv', function(err, rows){
           type: 'scattergeo',
           mode: 'markers',
           text: frames[0].data[0].size,
-          meta: frames[0].data[0].text,
+          meta: frames[0].data[0].texts,
           lon: frames[0].data[0].lon,
           lat: frames[0].data[0].lat,
           hovertemplate: `<b>Fire Size: %{text} acres </b><br>` +
